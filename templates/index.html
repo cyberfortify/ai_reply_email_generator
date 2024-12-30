@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Email Reply Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Email Reply Generator</h1>
+  <textarea id="emailInput" placeholder="Paste the email you need to reply to..."></textarea>
+  <button onclick="generateReply()">Generate Reply</button>
+  <div class="output">
+    <h3>Generated Reply:</h3>
+    <p id="replyOutput">Your reply will appear here...</p>
+  </div>
+
+  <script>
+    async function generateReply() {
+      const emailContent = document.getElementById("emailInput").value;
+      const replyOutput = document.getElementById("replyOutput");
+      replyOutput.textContent = "Generating reply...";
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/generate-reply", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailContent }),
+        });
+        const data = await response.json();
+
+        if (data.reply) {
+          replyOutput.textContent = data.reply;
+        } else {
+          replyOutput.textContent = "Error: " + (data.error || "Failed to generate reply.");
+        }
+      } catch (error) {
+        replyOutput.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
